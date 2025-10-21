@@ -61,15 +61,65 @@ class StringController extends Controller
         ]);
     }
 
-    public function index(Request $request)
-    {
-        return response()->json(['message' => 'list endpoint placeholder']);
+   public function index(Request $request)
+{
+    $query = AnalyzedString::query();
+
+    // Filter for palindrome property
+    if ($request->has('is_palindrome')) {
+        $isPalindrome = filter_var($request->is_palindrome, FILTER_VALIDATE_BOOLEAN);
+        $query->where('properties->is_palindrome', $isPalindrome);
     }
 
-    public function naturalFilter(Request $request)
-    {
-        return response()->json(['message' => 'natural language filter placeholder']);
+    // Filter for has_numbers property
+    if ($request->has('has_numbers')) {
+        $hasNumbers = filter_var($request->has_numbers, FILTER_VALIDATE_BOOLEAN);
+        $query->where('properties->has_numbers', $hasNumbers);
     }
+
+    // Filter for has_special_characters property
+    if ($request->has('has_special_characters')) {
+        $hasSpecials = filter_var($request->has_special_characters, FILTER_VALIDATE_BOOLEAN);
+        $query->where('properties->has_special_characters', $hasSpecials);
+    }
+
+    // Add more filters as needed...
+
+    // Paginate the results
+    $results = $query->paginate(15);
+
+    return response()->json($results);
+}
+
+    public function naturalFilter(Request $request)
+{
+    $query = AnalyzedString::query();
+    $searchQuery = strtolower($request->input('q', ''));
+
+    if (str_contains($searchQuery, 'palindrome')) {
+        $query->where('properties->is_palindrome', true);
+    }
+
+    if (str_contains($searchQuery, 'numbers')) {
+        $query->where('properties->has_numbers', true);
+    }
+
+    if (str_contains($searchQuery, 'special characters')) {
+        $query->where('properties->has_special_characters', true);
+    }
+
+    // Example for length: "length greater than 10"
+    if (preg_match('/length (greater|more) than (\d+)/', $searchQuery, $matches)) {
+        $query->where('properties->length', '>', (int)$matches[2]);
+    }
+
+    // Example for length: "length less than 10"
+     if (preg_match('/length less than (\d+)/', $searchQuery, $matches)) {
+        $query->where('properties->length', '<', (int)$matches[2]);
+    }
+
+    return response()->json($query->paginate(15));
+}
 
     public function destroy($string_value)
     {
