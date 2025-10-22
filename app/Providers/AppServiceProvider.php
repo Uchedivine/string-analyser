@@ -18,14 +18,14 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-public function boot(): void
-{
-    Route::middleware('api')
-         ->prefix('api') 
-         ->group(base_path('routes/api.php'));
+    public function boot(): void
+    {
+        // ✅ Load API routes directly (no /api prefix)
+        Route::middleware('api')
+            ->group(base_path('routes/api.php'));
 
-    Route::middleware('web')
-         ->group(base_path('routes/web.php'));
-}
-
+        // ✅ Load web routes normally
+        Route::middleware('web')
+            ->group(base_path('routes/web.php'));
+    }
 }

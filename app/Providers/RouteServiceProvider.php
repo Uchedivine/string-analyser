@@ -7,13 +7,10 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     */
     public function boot(): void
     {
         $this->routes(function () {
-            // ✅ Removed the "api" prefix so routes become /strings instead of /api/strings
+            // ✅ No 'api' prefix — needed so HNG endpoints match /strings directly
             Route::middleware('api')
                 ->group(base_path('routes/api.php'));
 
