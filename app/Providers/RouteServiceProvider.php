@@ -13,8 +13,8 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->routes(function () {
-            Route::prefix('api')
-                ->middleware('api')
+            // ✅ Removed the "api" prefix so routes become /strings instead of /api/strings
+            Route::middleware('api')
                 ->group(base_path('routes/api.php'));
 
             Route::middleware('web')
